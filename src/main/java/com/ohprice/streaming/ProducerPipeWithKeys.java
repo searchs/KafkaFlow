@@ -1,6 +1,5 @@
 package com.ohprice.streaming;
 
-import com.sun.xml.internal.bind.v2.runtime.output.Pcdata;
 import org.apache.kafka.clients.producer.*;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.slf4j.Logger;
@@ -8,11 +7,11 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Properties;
 
-public class ProducerPipe {
+public class ProducerPipeWithKeys {
 
     public static void main(String[] args) {
 
-        final Logger logger = LoggerFactory.getLogger(ProducerPipe.class);
+        final Logger logger = LoggerFactory.getLogger(ProducerPipeWithKeys.class);
 
         System.out.println("Running ProducePipe");
         String bootstrapServers = "127.0.0.1:9092";
@@ -27,9 +26,14 @@ public class ProducerPipe {
         KafkaProducer<String, String> producer = new KafkaProducer<String, String>(properties);
 
         //Create Producer record
-        for (int i = 0; i < 6; i++) {
-            final ProducerRecord<String, String> record = new ProducerRecord<String, String>("movie_topic", "slow country__" + i);
+        for (int i = 0; i < 10; i++) {
 
+            String topic = "movie_topic";
+            String value = "Slow Country __" + i;
+            String key = "id_+ " + i;
+
+            final ProducerRecord<String, String> record = new ProducerRecord<String, String>(topic, key, value);
+            logger.info("Key: " + key);
             //Send Data - Asynchronous
 
             producer.send(record, new Callback() {
